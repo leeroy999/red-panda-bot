@@ -1,18 +1,42 @@
 import * as functions from "firebase-functions";
-import {Telegraf} from "telegraf";
+import { Telegraf } from 'telegraf';
 
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
 
-const bot = new Telegraf(functions.config().telegrambot.key);
-console.log("test");
+const { key, region, project } = functions.config().telegrambot;
 
-bot.on("text", (ctx) => ctx.reply(
-    "Hi! I am Red Panda bot, a cute and fearless bot!!"
-));
-bot.hears("hi", (ctx) => ctx.reply("Hey there"));
-bot.launch();
+const bot = new Telegraf(key, {
+	telegram: { webhookReply: true },
+});
 
-exports.bot = functions.https.onRequest((req, res) => {
-  bot.handleUpdate(req.body, res);
+const url = process.env.FUNCTIONS_EMULATOR === "true"
+  // change to own external localhost website (e.g. using ngrok)
+  ?  `https://fluffy-sheep-48.loca.lt/red-panda-telegram-bot/us-central1/bot` 
+  : `https://${region!}-${project!}.cloudfunctions.net/bot`
+
+bot.telegram.setWebhook(
+  url
+).catch((err) => {
+  functions.logger.error('[Bot] Error', err);
+});
+
+// error handling
+bot.catch((err, ctx) => {
+	functions.logger.error('[Bot] Error', err);
+	ctx.reply(`Ooops, encountered an error for ${ctx.updateType}, ${err}`);
+});
+
+// initialize the commands
+bot.command('/start', (ctx) => ctx.reply('Hello! Send any message and I will copy it.'));
+// copy every message and send to the user
+bot.on('message', (ctx) => ctx.telegram.sendCopy(ctx.chat.id, ctx.message));
+
+exports.bot = functions.https.onRequest(async (req, res) => {
+  functions.logger.log(`Incoming message`, req.body);
+  try {
+    await bot.handleUpdate(req.body, res);
+  } finally {
+    res.status(200).end();
+  }  
 });
