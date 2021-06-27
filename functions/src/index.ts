@@ -5,6 +5,7 @@ import {Telegraf} from "telegraf";
 // https://firebase.google.com/docs/functions/typescript
 
 const bot = new Telegraf(functions.config().telegrambot.key);
+console.log("test");
 
 bot.hears("hi", (ctx) => ctx.reply("Hey there"));
 bot.launch();
