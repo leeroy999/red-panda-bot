@@ -8,7 +8,7 @@ const bot = new Telegraf(functions.config().telegrambot.key);
 console.log("test");
 
 bot.on("text", (ctx) => ctx.reply(
-    "Hi! I am Red Panda bot, a cute and fearless bot!"
+    "Hi! I am Red Panda bot, a cute and fearless bot!!"
 ));
 bot.hears("hi", (ctx) => ctx.reply("Hey there"));
 bot.launch();
