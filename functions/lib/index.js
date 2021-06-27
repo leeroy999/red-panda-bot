@@ -8,9 +8,10 @@ const { key, region, project } = functions.config().telegrambot;
 const bot = new telegraf_1.Telegraf(key, {
     telegram: { webhookReply: true },
 });
+const externalHost = "https://fluffy-sheep-48.loca.lt"; // Must be HTTPS
 const url = process.env.FUNCTIONS_EMULATOR === "true"
     // change to own external localhost website (e.g. using ngrok)
-    ? `https://fluffy-sheep-48.loca.lt/red-panda-telegram-bot/us-central1/bot`
+    ? `${externalHost}/${project}/${region}/bot`
     : `https://${region}-${project}.cloudfunctions.net/bot`;
 bot.telegram.setWebhook(url).catch((err) => {
     functions.logger.error('[Bot] Error', err);
@@ -25,7 +26,7 @@ bot.command('/start', (ctx) => ctx.reply('Hello! Send any message and I will cop
 // copy every message and send to the user
 bot.on('message', (ctx) => ctx.telegram.sendCopy(ctx.chat.id, ctx.message));
 exports.bot = functions.https.onRequest(async (req, res) => {
-    functions.logger.log(`Incoming message: ${req.body}`);
+    functions.logger.log(`Incoming message`, req.body);
     try {
         await bot.handleUpdate(req.body, res);
     }

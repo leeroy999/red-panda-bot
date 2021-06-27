@@ -10,9 +10,11 @@ const bot = new Telegraf(key, {
 	telegram: { webhookReply: true },
 });
 
+const externalHost = "https://fluffy-sheep-48.loca.lt" // Must be HTTPS
+
 const url = process.env.FUNCTIONS_EMULATOR === "true"
   // change to own external localhost website (e.g. using ngrok)
-  ?  `https://fluffy-sheep-48.loca.lt/red-panda-telegram-bot/us-central1/bot` 
+  ?  `${externalHost}/${project!}/${region!}/bot` 
   : `https://${region!}-${project!}.cloudfunctions.net/bot`
 
 bot.telegram.setWebhook(
