@@ -9,7 +9,7 @@ The main logic is in functions/src/index.ts
 
 
 To setup for project:
-
+git 
 cd functions
 npm install
 
