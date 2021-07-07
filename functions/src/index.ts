@@ -102,11 +102,11 @@ exports.bot = functions
       }
     });
 
-exports.scheduledFunctionCrontab = functions
+exports.scheduledBirthday = functions
     .region(region)
     .pubsub
-    .schedule('00 09,13 * * *')
-    .timeZone('Singapore')
+    .schedule('0 9 * * *')
+    .timeZone('Asia/Singapore')
     .onRun(async () => {
       const month = getMonth(moment());
       const date = getDate(moment());
@@ -123,8 +123,9 @@ exports.scheduledFunctionCrontab = functions
           return user.username ? `@${user.username}` : null;
         });
         Promise.all(nameArr).then((arr: (string | null)[]) => {
+          const newArr = arr.filter((x) => x);
           bot.telegram.sendMessage(memberChatId.val(),
-              `Happy birthday ${arr.join(' and ')}!`);
+              `Happy birthday ${newArr.join(' and ')}!`);
         });
       }
       if (memberChatId.exists()) {

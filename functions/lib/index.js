@@ -85,11 +85,11 @@ exports.bot = functions
         res.status(200).end();
     }
 });
-exports.scheduledFunctionCrontab = functions
+exports.scheduledBirthday = functions
     .region(region)
     .pubsub
-    .schedule('00 09,13 * * *')
-    .timeZone('Singapore')
+    .schedule('0 9 * * *')
+    .timeZone('Asia/Singapore')
     .onRun(async () => {
     const month = botUtils_1.getMonth(moment());
     const date = botUtils_1.getDate(moment());
@@ -106,7 +106,8 @@ exports.scheduledFunctionCrontab = functions
             return user.username ? `@${user.username}` : null;
         });
         Promise.all(nameArr).then((arr) => {
-            bot.telegram.sendMessage(memberChatId.val(), `Happy birthday ${arr.join(' and ')}!`);
+            const newArr = arr.filter((x) => x);
+            bot.telegram.sendMessage(memberChatId.val(), `Happy birthday ${newArr.join(' and ')}!`);
         });
     }
     if (memberChatId.exists()) {
