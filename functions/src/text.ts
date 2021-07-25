@@ -97,23 +97,13 @@ export const issues = {
 /* Commands
 start - - Start the bot with greeting message.
 help - -> Show greeting message.
-bday - DD/MM/YYYY -> (Members only) Set birthday date to DD/MM/YYYY.
-info - <@username> -> (Members only) Get information of username.
-anonmsg - <message> -> (Members only)(private message only) Send an anonymous message to the Peer Mentors
-roll - -> Roll dice.
-rand - <min(optional)> <max> -> Choose a random number between min and max. Default min is 0.
-pic - -> Send a picture of Red Panda!
-fact - -> Send a fact of Red Panda!
-joke - -> Send a joke!
+commands - -> Show list of commands
 bus - -> NUS Bus routes and info.
 reminder - -> set temperature declaration reminders
 pgphandbook - -> Show PGP Handbook.
 hotline - -> important contacts and hotlines
 emergency - -> important emergency information and contacts
-rules - -> housing rules and Demerit Point Structure
-maintenance - -> maintenance issues procedures
-others - -> other residential issues procedures
-dyom - -> design your own module information
+bday - <DD/MM/YYYY> -> (Members only) Set birthday date to <DD/MM/YYYY>.
 */
 
 export const publicCmds =
@@ -126,6 +116,7 @@ export const publicCmds =
 /pic - <code>Send a picture of Red Panda!</code>
 /fact - <code>Send a fact of Red Panda!</code>
 /joke - <code>Send a joke!</code>
+/8ball &lt;question&gt; - <code>Reply to your yes or no question.</code>
 
 <b>NUS</b>
 /bus - <code>NUS Bus routes and info.</code>
@@ -145,6 +136,7 @@ export const memberCmds =
 `<b>Member Commands</b>
 /info @username - <code>(Members only) Get information of username</code>
 /bday &lt;DD/MM/YYYY&gt; - <code>(Members only) Set birthday date to &lt;DD/MM/YYYY&gt;.</code>
+/bdaymonth &lt;month&gt; - <code>(Members only) Show all birthdays for a specific month.</code>
 /anonmsg &lt;message&gt; - <code>(Members only)(private message only) Send an anonymous message to the Peer Mentors</code>
 `;
 
@@ -186,3 +178,6 @@ export const nextReply = '<u>Long press</u> /reply &lt;message&gt; to reply to t
 export const noReply = 'You have no one to reply to!';
 
 export const noBday = 'No birthday set. Type <code>/bday DD/MM/YYYY</code> to set your birthday date.';
+export const invalidDate = 'Invalid date! Use DD/MM/YYYY';
+export const invalidMonth = 'Invalid month! Use Jan/Feb/Mar etc.';
+export const noPersonBday = 'No one has birthday on the month of: ';

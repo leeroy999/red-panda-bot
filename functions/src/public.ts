@@ -13,7 +13,7 @@ import {
   SUPERADMINLIST,
 } from './constants';
 import { adminCmds, bus, greeting, hotlines, issues,
-  memberCmds, pgphandbook, pgphandbookLink, publicCmds,
+  memberCmds, noParam, pgphandbook, pgphandbookLink, publicCmds,
   redPandaFacts, superAdminCmds } from './text';
 import axios from 'axios';
 
@@ -34,7 +34,8 @@ export const publicCommands =
       const superAdminList = await getData(database, SUPERADMINLIST);
       const admin = await isAdmin(database, ctx, ctx.from);
       const member = await isMember(database, ctx, ctx.from);
-      if (superAdminList.val().includes(userId) && chatType === 'private') {
+      if (superAdminList.val() &&
+        superAdminList.val().includes(userId) && chatType === 'private') {
         ctx.replyWithHTML(superAdminCmds);
       }
       if (adminRoom.val() === chatId ||
@@ -319,6 +320,29 @@ export const publicCommands =
       const len = redPandaFacts.length;
       const rand = Math.floor(Math.random() * (len));
       ctx.replyWithHTML(`<b>Did you know?</b> ${redPandaFacts[rand]}`);
+      log(ctx, database, ctx.message.text);
+    });
+
+    /* command: /8ball <question>
+     *
+     * purpose: ask 8ball question
+     */
+    bot.command('/8ball', async (ctx) => {
+      const msg = ctx.message.text;
+      const firstSpace = msg.indexOf(' ');
+      if (firstSpace === -1) {
+        ctx.replyWithHTML(noParam);
+      } else {
+        const question = msg.substring(msg.indexOf(' ') + 1);
+        const params = encodeURIComponent(question);
+        const res = await axios.get('https://8ball.delegator.com/magic/JSON/' + params);
+        const data = await res.data;
+        if (data.magic.answer) {
+          ctx.reply(data.magic.answer);
+        } else {
+          ctx.reply('ERROR: 8ball not feeling so good...');
+        }
+      }
       log(ctx, database, ctx.message.text);
     });
   };

@@ -31,7 +31,7 @@ const bot = new Telegraf(key, {
   telegram: { webhookReply: true },
 });
 
-const externalHost = 'https://polite-octopus-2.loca.lt'; // Must be HTTPS
+const externalHost = 'https://selfish-octopus-75.loca.lt'; // Must be HTTPS
 
 const url = process.env.FUNCTIONS_EMULATOR === 'true' ?
   // change to own external localhost website (e.g. using ngrok)

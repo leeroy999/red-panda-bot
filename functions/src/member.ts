@@ -10,8 +10,9 @@ import { getData, getDate, getMonth, initialiseMember, isMember,
   log,
   removeBdayMember,
   setData } from './botUtils';
-import { ADMINROOM, BDAY, USERS } from './constants';
-import { noBday, noParam, notInGroup } from './text';
+import { ADMINROOM, BDAY, MEMBERROOM, USERS } from './constants';
+import { invalidDate, invalidMonth, noBday,
+  noParam, noPersonBday, notInGroup } from './text';
 
 export const memberCommands =
   (bot: Telegraf<Context<Update>>,
@@ -56,19 +57,20 @@ export const memberCommands =
                             removeBdayMember(oldBdayMoment, database,
                                 messagerId),
                             database.ref(USERS + messagerId).update({
-                              birthday: bday,
+                              birthday: bdayMoment.format('DD/MM/YYYY'),
                             }),
                           ]);
                         } else {
                           database.ref(USERS + messagerId).update({
-                            birthday: bday,
+                            birthday: bdayMoment.format('DD/MM/YYYY'),
                           });
                         }
                       });
                 }).catch((e) => {
                   throw e;
                 });
-            ctx.reply(`You have set birthday to ${bday}`);
+            ctx.reply(
+                `You have set birthday to ${bdayMoment.format('DD/MM/YYYY')}`);
             log(ctx, database, `Bday set: ${bday}`);
           } else if (msg.indexOf(' ') === -1) {
             const userData = await getData(database,
@@ -80,7 +82,7 @@ export const memberCommands =
             }
             log(ctx, database, `Invalid date: ${bday}`);
           } else {
-            ctx.reply('Invalid date! Use DD/MM/YYYY');
+            ctx.reply(invalidDate);
             log(ctx, database, `Invalid date: ${bday}`);
           }
         } catch (err) {
@@ -91,6 +93,51 @@ export const memberCommands =
         ctx.reply(notInGroup);
         log(ctx, database, notInGroup);
       }
+    });
+
+    /* command: /bdaymonth <month>
+     *
+     * purpose: send other residential issues procedures
+     */
+    bot.command('/bdaymonth', async (ctx) => {
+      const msg = ctx.message.text;
+      // check if messager is member
+      const member = await isMember(database, ctx, ctx.from);
+      if (!member) {
+        ctx.reply(notInGroup);
+      } else {
+        let month: Moment = moment();
+        if (msg.indexOf(' ') !== -1) {
+          const str = msg.substring(msg.indexOf(' ') + 1);
+          month = moment(str, 'MMMM');
+        }
+        if (month.isValid()) {
+          const monthStr = getMonth(month);
+          const data = await getData(database, `${BDAY}/${monthStr}`);
+          if (data.exists()) {
+            const bdayList: {[date: string]: number[] | null} = data.val();
+            ctx.reply(`Birthdays for ${monthStr}:`),
+            Object.keys(bdayList).forEach(async (date: string) => {
+              const idArr = bdayList[date];
+              const memberRoom = await getData(database, MEMBERROOM);
+              if (idArr && memberRoom.exists()) {
+                idArr.forEach(async (id: number) => {
+                  const user = (await ctx.telegram
+                      .getChatMember(memberRoom.val(), id)).user;
+                  ctx.reply(`${date}: @${user.username}\n`);
+                });
+              } else {
+                ctx.reply(noPersonBday + monthStr);
+              }
+            });
+          } else {
+            ctx.reply(noPersonBday + monthStr);
+          }
+        } else {
+          ctx.reply(invalidMonth);
+        }
+      }
+      log(ctx, database, ctx.message.text);
     });
 
     /* command: /anonmsg <message>
