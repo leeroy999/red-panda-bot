@@ -35,7 +35,7 @@ export const hotlines =
 <b>PGPR Management Office</b> (MO) (9-6pm): 66011111
 <b>Fire Command Center</b> (FCC) (24hrs): 66012222
 <b>Campus Security</b> (24hrs): 68741616
-<b>OHS Hotline</b> (urgent maintenance): 65161212
+<b>Office of Housing Services(OHS) Hotline</b>: 65161212
 <b>Laundry room issues</b>: 97250566
 <b>ITcare</b>: 65162080`;
 
@@ -59,6 +59,7 @@ export const issues = {
 - Singapore Police Hotline: 18002550000
       
 <b>Psychological / Security Emergency</b>
+- Lifeline NUS / Security Related / Housing enquiries: 65161212
 - Lifeline NUS (psychological): 65167777
 - Kent Ridge Security: 68741616
 - Bukit Timah Campus: 65163636
@@ -76,6 +77,7 @@ export const issues = {
 (e.g. lights blow, toilet choked etc.)
 <b>UHMS > Room Maintenance > New Job</b>`,
   uhmsLink: 'https://uhms.nus.edu.sg/StudentPortal/6B6F7C08/8/238/Home-Home_',
+  maintenanceFeedback: 'https://uci.nus.edu.sg/ohs/contact-us/',
   residential:
 `<b>Residential issues</b>
 - <u>Conflict with other resident</u>: report to PM
@@ -121,6 +123,8 @@ export const publicCmds =
 <b>NUS</b>
 /bus - <code>NUS Bus routes and info.</code>
 /reminder - <code>Set temperature declaration reminders.</code>
+/map - <code>Relevant maps that you may need.</code>
+/links - <code>Useful telegram channels/groups</code>
 
 <b>PGP House</b>
 /pgphandbook - <code>Show PGP Handbook.</code>
@@ -129,7 +133,6 @@ export const publicCmds =
 /rules - <code>Housing rules and Demerit Point Structure</code>
 /maintenance - <code>Maintenance issues procedures</code>
 /others - <code>Other residential issues procedures</code>
-/dyom - <code>Design your own module information</code>
 `;
 
 export const memberCmds =
@@ -154,6 +157,8 @@ export const superAdminCmds =
 /setMemberRoom - <code>Set current chat as member chat</code>
 /setLogRoom - <code>Set current chat as log chat</code>
 /send &lt;chatId&gt; &lt;message&gt; - <code>Send message to specific chat ID</code>
+/getinfo &lt;userId&gt; - <code>Get info of user</code>
+/setuser &lt;userId&gt; - <code>Set user as member</code>
 `;
 
 export const redPandaFacts = [
@@ -181,3 +186,47 @@ export const noBday = 'No birthday set. Type <code>/bday DD/MM/YYYY</code> to se
 export const invalidDate = 'Invalid date! Use DD/MM/YYYY';
 export const invalidMonth = 'Invalid month! Use Jan/Feb/Mar etc.';
 export const noPersonBday = 'No one has birthday on the month of: ';
+
+export const mapText = 'These are some maps that you may need: ';
+
+export const mapLinks = {
+  nusMapLink: 'http://map.nus.edu.sg/',
+  nusMapPdf: 'http://map.nus.edu.sg/assets/campusmap/pdf/campus_map_full_version.pdf',
+  pgpMap: 'https://uci.nus.edu.sg/ohs/wp-content/uploads/sites/3/2018/07/OHS_PGPR-MAP_large.png',
+  mrtMap: 'https://www.lta.gov.sg/content/dam/ltagov/getting_around/public_transport/rail_network/image/en-sm-20-01-web.png',
+};
+
+export const smmRules = {
+  link: 'https://nus.edu.sg/osa/docs/default-source/osa-doc/resources-and-policies/covid-19/osacircno10(21jul2021).pdf?sfvrsn=30d6e4b1_4',
+  period: '(22 July 2021 - 18 August 2021)',
+};
+
+export const usefulLinks =
+`Telegram groups/channels that might be useful. Feel free to private message Leeroy if you find more!
+
+<b>PGP House</b>
+PGP House Telegram (channel): https://t.me/PGPHouse
+
+<b>NUS</b>
+NUSSU Official Telegram (channel): https://t.me/nushappenings
+NUS Lost & Found (group): https://t.me/NUSlostandfound
+NUS Peer Tutors (group): https://t.me/nuspeertutors
+Stead Supper NUS (channel): https://t.me/steadsuppernus
+ASK.NUS (group): https://t.me/joinchat/Dcv5g0bn-3HE9sDwgxT5tA
+NUS Foodie (Promotion/News) (channel): https://t.me/nusfoodies
+NUS Sports Club (channel): https://t.me/NUSSportsClub
+NUS CSC volunteering (channel): https://t.me/nuscsc
+NUS Tuition Assignments (channel): https://t.me/Nustuition
+
+<b>Computing:</b>
+NUS Computing Official (channel): https://t.me/nuscomputing
+NUS Computing Club (channel): https://t.me/nuscomputingclub
+NUS Hackers (channel): https://t.me/nushackers
+DSC NUS (channel): https://t.me/dscnus
+CFG Internship Channel (channel): https://t.me/joinchat/AAAAAEicCfFUq5kgF_xttg
+
+<b>General / Singapore</b>
+Straits Times (channel): https://t.me/TheStraitsTimes
+CNA News (channel): https://t.me/cnalatest
+SG Kiasu Foodies (channel): https://t.me/kiasufoodies
+GoodLobang (channel): https://t.me/goodlobang`;

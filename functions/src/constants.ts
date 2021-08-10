@@ -5,7 +5,6 @@ export const SUPERADMINLIST = 'admin/superAdminList';
 export const ADMINLIST = 'admin/adminList';
 export const ADMINROOM = 'admin/adminRoom';
 export const MEMBERROOM = 'admin/memberRoom';
-export const LOGROOM = 'admin/logRoom';
 
 export const USERS = 'users/';
 

@@ -3,7 +3,7 @@
 import * as admin from 'firebase-admin';
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
-import { getData, isAdmin, isMember, log } from './botUtils';
+import { getData, isAdmin, isMember } from './botUtils';
 import {
   ADMINROOM,
   AFTERNOONREMINDER,
@@ -13,8 +13,10 @@ import {
   SUPERADMINLIST,
 } from './constants';
 import { adminCmds, bus, greeting, hotlines, issues,
+  mapLinks,
+  mapText,
   memberCmds, noParam, pgphandbook, pgphandbookLink, publicCmds,
-  redPandaFacts, superAdminCmds } from './text';
+  redPandaFacts, smmRules, superAdminCmds, usefulLinks } from './text';
 import axios from 'axios';
 
 
@@ -48,7 +50,6 @@ export const publicCommands =
         ctx.replyWithHTML(memberCmds);
       }
       ctx.replyWithHTML(publicCmds);
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /help
@@ -57,7 +58,6 @@ export const publicCommands =
      */
     bot.command('/help', (ctx) => {
       ctx.reply(greeting());
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /bus
@@ -83,7 +83,6 @@ export const publicCommands =
           ],
         },
       });
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /pgphandbook
@@ -101,7 +100,6 @@ export const publicCommands =
           ],
         },
       });
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /roll
@@ -110,7 +108,6 @@ export const publicCommands =
      */
     bot.command('/roll', async (ctx) => {
       ctx.replyWithDice();
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /rand <lowest: default 0> <highest>
@@ -141,7 +138,6 @@ export const publicCommands =
       } else {
         ctx.reply(`Random: ${Math.random()}`);
       }
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /reminder
@@ -178,7 +174,6 @@ export const publicCommands =
       } else {
         ctx.reply('Please private message me this command!');
       }
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /hotline
@@ -187,7 +182,6 @@ export const publicCommands =
      */
     bot.command('/hotline', async (ctx) => {
       ctx.replyWithHTML(hotlines);
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /emergency
@@ -205,7 +199,6 @@ export const publicCommands =
           ],
         },
       });
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /rules
@@ -220,10 +213,13 @@ export const publicCommands =
               text: 'Demerit Point Structure',
               url: issues.demeritLink,
             }],
+            [{
+              text: `Safety Management Measures ${smmRules.period}`,
+              url: smmRules.link,
+            }],
           ],
         },
       });
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /maintenance
@@ -238,10 +234,13 @@ export const publicCommands =
               text: 'UHMS',
               url: issues.uhmsLink,
             }],
+            [{
+              text: 'Housing Feedback',
+              url: issues.maintenanceFeedback,
+            }],
           ],
         },
       });
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /others
@@ -250,21 +249,35 @@ export const publicCommands =
      */
     bot.command('/others', async (ctx) => {
       ctx.replyWithHTML(issues.residential);
-      log(ctx, database, ctx.message.text);
     });
 
-    /* command: /dyom
+    /* command: /map
      *
-     * purpose: send other residential issues procedures
+     * purpose: maps that you may need
      */
-    bot.command('/dyom', async (ctx) => {
-      ctx.replyWithChatAction('upload_document');
-      ctx.replyWithDocument({
-        source: 'src/dyom.pdf',
-      }).catch((e) => {
-        ctx.reply(`${e}`);
+    bot.command('/map', async (ctx) => {
+      ctx.replyWithHTML(mapText, {
+        reply_markup: {
+          inline_keyboard: [
+            [{
+              text: 'NUS Map Link',
+              url: mapLinks.nusMapLink,
+            }],
+            [{
+              text: 'NUS Map Pdf',
+              url: mapLinks.nusMapPdf,
+            }],
+            [{
+              text: 'PGP Map',
+              url: mapLinks.pgpMap,
+            }],
+            [{
+              text: 'Mrt Map',
+              url: mapLinks.mrtMap,
+            }],
+          ],
+        },
       });
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /pic
@@ -285,12 +298,11 @@ export const publicCommands =
               ctx.reply('Unable to fetch image. Try again.');
             });
       }
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /joke
      *
-     * purpose: send other residential issues procedures
+     * purpose: send a joke
      */
     bot.command('/joke', async (ctx) => {
       const res = await axios.get('https://official-joke-api.appspot.com/random_joke');
@@ -309,18 +321,16 @@ export const publicCommands =
       } else {
         ctx.reply('The joker is down :(');
       }
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /fact
      *
-     * purpose: send other residential issues procedures
+     * purpose: send random red panda fact
      */
     bot.command('/fact', async (ctx) => {
       const len = redPandaFacts.length;
       const rand = Math.floor(Math.random() * (len));
       ctx.replyWithHTML(`<b>Did you know?</b> ${redPandaFacts[rand]}`);
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /8ball <question>
@@ -343,6 +353,12 @@ export const publicCommands =
           ctx.reply('ERROR: 8ball not feeling so good...');
         }
       }
-      log(ctx, database, ctx.message.text);
+    });
+    /* command: /links
+     *
+     * purpose: send useful telegram links
+     */
+    bot.command('/links', async (ctx) => {
+      ctx.replyWithHTML(usefulLinks);
     });
   };

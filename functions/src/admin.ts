@@ -4,9 +4,11 @@ import * as admin from 'firebase-admin';
 import { Context, Telegraf } from 'telegraf';
 import {
   ChatMember,
+  PhotoSize,
   Update,
 } from 'telegraf/typings/core/types/typegram';
-import { getData, initialiseMember, isAdmin, log, setData } from './botUtils';
+import { getData, initialiseMember, isAdmin,
+  isMember, setData } from './botUtils';
 import { ADMIN, ADMINLIST, MEMBERROOM, SUPERADMINLIST } from './constants';
 import { noParam, noReply } from './text';
 
@@ -68,7 +70,6 @@ export const adminCommands =
           ctx.reply('ERROR: Not a superadmin!');
         }
       });
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /setMemberRoom
@@ -88,7 +89,6 @@ export const adminCommands =
           ctx.reply('ERROR: Not a superadmin!');
         }
       });
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /setLogRoom
@@ -107,7 +107,6 @@ export const adminCommands =
         } else {
           ctx.reply('ERROR: Not a superadmin!');
         }
-        log(ctx, database, ctx.message.text);
       });
     });
 
@@ -130,7 +129,71 @@ export const adminCommands =
       } else {
         ctx.reply('ERROR: Not a superadmin!');
       }
-      log(ctx, database, ctx.message.text);
+    });
+
+    /* command: /getinfo <userId>
+     *
+     * purpose: get info on userId
+     */
+    bot.command('/getinfo', async (ctx) => {
+      const superAdmin = await getData(database, SUPERADMINLIST);
+      if (superAdmin.exists() &&
+        superAdmin.val().includes(ctx.message.from.id)) {
+        const msg = ctx.message.text;
+        const firstSpace = msg.indexOf(' ');
+        const userId = parseInt(msg.substring(firstSpace + 1));
+        if (firstSpace !== -1 && !isNaN(userId)) {
+          const photos = await ctx.telegram.getUserProfilePhotos(userId);
+          photos.photos.forEach((photosizes: PhotoSize[]) => {
+            ctx.replyWithChatAction('upload_photo');
+            ctx.replyWithPhoto(photosizes[0].file_id);
+          });
+          const memberChat = await getData(database, MEMBERROOM);
+          if (memberChat.exists()) {
+            const memberChatId: number = memberChat.val();
+            const user = await ctx.telegram.getChatMember(memberChatId, userId);
+            ctx.reply(`username: ${user.user.username}
+name: ${user.user.first_name} ${user.user.last_name}
+id: ${user.user.id}`);
+          }
+        } else {
+          ctx.replyWithHTML(noParam);
+        }
+      } else {
+        ctx.reply('ERROR: Not a superadmin!');
+      }
+    });
+
+    /* command: /setuser <userId>
+     *
+     * purpose: Set user to member or not
+     */
+    bot.command('/setuser', async (ctx) => {
+      const superAdmin = await getData(database, SUPERADMINLIST);
+      if (superAdmin.exists() &&
+        superAdmin.val().includes(ctx.message.from.id)) {
+        const msg = ctx.message.text;
+        const firstSpace = msg.indexOf(' ');
+        const userId = parseInt(msg.substring(firstSpace + 1));
+        if (firstSpace !== -1 && !isNaN(userId)) {
+          const memberChat = await getData(database, MEMBERROOM);
+          if (memberChat.exists()) {
+            const memberChatId: number = memberChat.val();
+            const user = await ctx.telegram.getChatMember(memberChatId, userId);
+            const member = await isMember(database, ctx, user.user);
+            if (member) {
+              initialiseMember(user.user.id, user.user, database);
+              ctx.reply('Set as member.');
+            } else {
+              ctx.reply('Not member...');
+            }
+          }
+        } else {
+          ctx.replyWithHTML(noParam);
+        }
+      } else {
+        ctx.reply('ERROR: Not a superadmin!');
+      }
     });
 
     /* command: /m <message>
@@ -146,11 +209,12 @@ export const adminCommands =
         if (memberChat.exists() && msg.indexOf(' ') !== -1) {
           const memberChatId: number = memberChat.val();
           ctx.telegram.sendMessage(memberChatId, message);
+        } else {
+          ctx.replyWithHTML(noParam);
         }
       } else {
         ctx.reply('ERROR: Not an admin!');
       }
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /reply <message>
@@ -168,7 +232,7 @@ export const adminCommands =
             const chatId = data.val()[0];
             const isAnon = data.val()[1] === 'anon';
             const msg = ctx.message.text.substring(argIndex);
-            const name = `${isAnon ? 'Red Panda' : `${ctx.from.username}`}`;
+            const name = `${isAnon ? 'Red Panda' : `@${ctx.from.username}`}`;
             ctx.telegram.sendMessage(chatId, `[${name}] ${msg}`).then(() => {
               ctx.reply(`Message sent: [${name}] ${msg}`);
               setData(database, path, null);
@@ -182,7 +246,6 @@ export const adminCommands =
       } else {
         ctx.reply('NOT ADMIN!');
       }
-      log(ctx, database, ctx.message.text);
     });
     /* command: /cancel
      *

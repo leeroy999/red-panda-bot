@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 import moment = require('moment');
 import { Context } from 'telegraf/typings/context';
 import { Update, User } from 'telegraf/typings/core/types/typegram';
-import { ADMINLIST, LOGROOM, USERS } from './constants';
+import { ADMINLIST, USERS } from './constants';
 
 export const isValidBday = (bday: string): boolean => {
   const re = /^[0-9]{2}[/]{1}[0-9]{2}[/]{1}[0-9]{4}$/g;
@@ -136,15 +136,3 @@ export const setData =
   Promise<void> => {
     database.ref(ref).set(value);
   };
-
-export const log = async (
-    ctx: Context<Update>,
-    database: admin.database.Database,
-    msg: string): Promise<void> => {
-  const logChatId = await getData(database, LOGROOM);
-  const user = ctx.from?.username;
-  const chatId = ctx.chat?.id;
-  if (logChatId.exists()) {
-    ctx.telegram.sendMessage(logChatId.val(), `[${chatId}] ${user}: ${msg}`);
-  }
-};

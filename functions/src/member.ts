@@ -7,7 +7,6 @@ import moment = require('moment');
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { getData, getDate, getMonth, initialiseMember, isMember,
-  log,
   removeBdayMember,
   setData } from './botUtils';
 import { ADMINROOM, BDAY, MEMBERROOM, USERS } from './constants';
@@ -71,7 +70,6 @@ export const memberCommands =
                 });
             ctx.reply(
                 `You have set birthday to ${bdayMoment.format('DD/MM/YYYY')}`);
-            log(ctx, database, `Bday set: ${bday}`);
           } else if (msg.indexOf(' ') === -1) {
             const userData = await getData(database,
                 `${USERS}${ctx.message.from.id}/birthday`);
@@ -80,18 +78,14 @@ export const memberCommands =
             } else {
               ctx.replyWithHTML(noBday);
             }
-            log(ctx, database, `Invalid date: ${bday}`);
           } else {
             ctx.reply(invalidDate);
-            log(ctx, database, `Invalid date: ${bday}`);
           }
         } catch (err) {
           ctx.reply('Error: ' + err);
-          log(ctx, database, `${err}`);
         }
       } else {
         ctx.reply(notInGroup);
-        log(ctx, database, notInGroup);
       }
     });
 
@@ -137,7 +131,6 @@ export const memberCommands =
           ctx.reply(invalidMonth);
         }
       }
-      log(ctx, database, ctx.message.text);
     });
 
     /* command: /anonmsg <message>
@@ -177,7 +170,6 @@ export const memberCommands =
           },
         });
       }
-      log(ctx, database, ctx.message.text);
     });
     /* command: /info <username(optional)>
      *
@@ -222,6 +214,5 @@ export const memberCommands =
           ctx.reply('Invalid user!');
         }
       }
-      log(ctx, database, ctx.message.text);
     });
   };

@@ -11,7 +11,6 @@ import {
   getMonth,
   initialiseMember,
   isMember,
-  log,
   removeMember,
 } from './botUtils';
 import { memberCommands } from './member';
@@ -31,7 +30,7 @@ const bot = new Telegraf(key, {
   telegram: { webhookReply: true },
 });
 
-const externalHost = 'https://selfish-octopus-75.loca.lt'; // Must be HTTPS
+const externalHost = 'https://bad-vampirebat-55.loca.lt'; // Must be HTTPS
 
 const url = process.env.FUNCTIONS_EMULATOR === 'true' ?
   // change to own external localhost website (e.g. using ngrok)
@@ -47,8 +46,6 @@ bot.telegram.setWebhook(
 /* -- Error Handling -- */
 bot.catch((err, ctx) => {
   functions.logger.error('[Bot] Error', err);
-  log(ctx, admin.database(),
-      `Ooops, encountered an error for ${ctx.updateType}, ${err}`);
   ctx.reply(`Ooops, encountered an error for ${ctx.updateType}, ${err}`);
 });
 
@@ -74,7 +71,6 @@ bot.command('/start', async (ctx) => {
   } else {
     ctx.reply(greeting() + notInGroup);
   }
-  log(ctx, admin.database(), ctx.message.text);
 });
 
 // when chat member joins
@@ -85,7 +81,6 @@ bot.on('new_chat_members', (ctx) => {
         initialiseMember(user.id, user, admin.database());
       }
     }));
-    log(ctx, admin.database(), `New member joined: ${user.username}`);
   });
 });
 
@@ -93,7 +88,6 @@ bot.on('new_chat_members', (ctx) => {
 bot.on('left_chat_member', async (ctx) => {
   const user: User = ctx.message.left_chat_member;
   removeMember(user.id, admin.database(), ctx);
-  log(ctx, admin.database(), `Member left: ${user.username}`);
 });
 
 // default response
@@ -101,7 +95,6 @@ bot.on('text', (ctx) => {
   // private message commands
   if (ctx.chat.type === 'private') {
     ctx.reply('WAAAH WRONG COMMANDzzzzz');
-    log(ctx, admin.database(), ctx.message.text);
   }
 
   // im dad joke
