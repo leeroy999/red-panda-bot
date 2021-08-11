@@ -22,11 +22,15 @@ export const bus = {
 
 export const morningTemperature =
 `Good Morning! Red Panda is reminding 
-you to submit your temperature declaration! ^.^`;
+you to submit your temperature declaration! ^.^
+
+https://myaces.nus.edu.sg/htd/htd`;
 
 export const afternoonTemperature =
 `Good Afternoon! Red Panda is reminding
-you to submit your temperature declaration! ^.^`;
+you to submit your temperature declaration! ^.^
+
+https://myaces.nus.edu.sg/htd/htd`;
 
 export const hotlines =
 `<b>These are important hotlines to take note of:</b>
